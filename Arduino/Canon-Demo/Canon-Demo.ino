@@ -44,7 +44,7 @@
 
 // Calibration angles in degrees (where do the steppers start).
 #define AZIMUTH_CALIBRATION_ANGLE     0.0
-#define ALTITUDE_CALIBRATION_ANGLE  -47.4 
+#define ALTITUDE_CALIBRATION_ANGLE  -47.4
 
 // Min and max angles in degrees
 #define AZIMUTH_MIN_ANGLE  -90.0
@@ -58,7 +58,7 @@
 
 
 // ---------------------------------------------------------------------
-// Libraries        
+// Libraries
 // ---------------------------------------------------------------------
 #include <AccelStepper.h>   // Steppers
 #include <Servo.h>          // Servo
@@ -72,7 +72,7 @@
 #define STEPPERS_STEPS_PER_REVOLUTION \
   (STEPPERS_FULL_STEPS_PER_REVOLUTION * STEPPERS_MICRO_STEPPING)
 
-// Min and max angles in steps  
+// Min and max angles in steps
 #define AZIMUTH_MIN_POSITION  (Deg2Steps(AZIMUTH_MIN_ANGLE))
 #define AZIMUTH_MAX_POSITION  (Deg2Steps(AZIMUTH_MAX_ANGLE))
 #define ALTITUDE_MIN_POSITION (Deg2Steps(ALTITUDE_MIN_ANGLE))
@@ -81,7 +81,7 @@
 // Convert from degrees to steps and vice versa
 #define Deg2Steps(deg) \
   ((deg / 360.0) * STEPPERS_STEPS_PER_REVOLUTION)
- 
+
 
 // ---------------------------------------------------------------------
 // Globals
@@ -105,6 +105,10 @@ long joystickY, newJoystickY;
 
 // Servo
 Servo servo;
+
+long lastMillis = 0;
+int i = 0;
+int j = 0;
 
 
 // ---------------------------------------------------------------------
@@ -152,18 +156,19 @@ void setup() {
 }
 
 void loop() {
-  if (digitalRead(JOYSTICK_SWITCH_PIN) == LOW) {
-    servo.write(SERVO_TRIGGER_ANGLE);
-    delay(400);
-    servo.write(SERVO_IDLE_ANGLE);
-//;  
+  if ((millis() - lastMillis) > 3000) {
+    if (j == 0) {
+      stepperAltitude.moveTo(map(0, 0, 1023, ALTITUDE_MIN_POSITION, ALTITUDE_MAX_POSITION));
+      stepperAzimuth.moveTo(map(0, 0, 1023, AZIMUTH_MIN_POSITION, AZIMUTH_MAX_POSITION));
+      j = 1;
+    }
+    else {
+      stepperAltitude.moveTo(map(750, 0, 1023, ALTITUDE_MIN_POSITION, ALTITUDE_MAX_POSITION));
+      stepperAzimuth.moveTo(map(1023, 0, 1023, AZIMUTH_MIN_POSITION, AZIMUTH_MAX_POSITION));
+      j = 0;
+    }
+    lastMillis = millis();
   }
-  newJoystickX = analogRead(JOYSTICK_X_PIN);
-  newJoystickY = analogRead(JOYSTICK_Y_PIN);
-  joystickX = abs(newJoystickX - joystickX) > 65 ? newJoystickX : joystickX;
-  joystickY = abs(newJoystickY - joystickY) > 65 ? newJoystickY : joystickY;  
-  stepperAzimuth.moveTo(map(joystickX, 0, 1023, AZIMUTH_MIN_POSITION, AZIMUTH_MAX_POSITION));
-  stepperAltitude.moveTo(map(joystickY, 0, 1023, ALTITUDE_MIN_POSITION, ALTITUDE_MAX_POSITION));
   stepperAzimuth.run();
   stepperAltitude.run();
 }
