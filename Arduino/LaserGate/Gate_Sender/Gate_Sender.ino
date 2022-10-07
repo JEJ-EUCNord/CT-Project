@@ -2,6 +2,8 @@
 #include <nRF24L01.h>
 #include <RF24.h>
 
+#define RADIO_CE 6
+#define RADIO_CSN 4
 #define BUZZER A3
 #define LASER_ADC A1
 #define PHOTODIODE A2
@@ -9,9 +11,9 @@
 #define LED_GREEN 8
 #define LED_RED 7
 
-RF24 radio(6, 4);  // CE, CSN
+RF24 radio(RADIO_CE, RADIO_CSN);
 const byte address[6] = "00001";
-char sender = 'A';
+const char sender = 'A';
 
 void setup() {
   pinMode(BUZZER, OUTPUT);
@@ -52,7 +54,7 @@ void loop() {
     digitalWrite(LED_RED, HIGH);
     digitalWrite(LED_GREEN, LOW);
     beep();
-    delay(3000);
+    delay(2000);
     digitalWrite(LED_RED, LOW);
     digitalWrite(LED_GREEN, HIGH);
   }

@@ -6,6 +6,8 @@
 #include <nRF24L01.h>
 #include <RF24.h>
 
+#define RADIO_CE 6
+#define RADIO_CSN 4
 #define BUZZER A3
 #define LASER_ADC A1
 #define PHOTODIODE A2
@@ -18,7 +20,7 @@ hd44780_I2Cexp lcd;  // declare lcd object: auto locate & auto config expander c
 const int LCD_COLS = 16;
 const int LCD_ROWS = 2;
 
-RF24 radio(6, 4);  // CE, CSN
+RF24 radio(RADIO_CE, RADIO_CSN);
 const byte address[6] = "00001";
 char sender;
 
@@ -141,6 +143,4 @@ void loop() {
       }
     }
   }
-
-  delay(5);
 }
