@@ -105,7 +105,7 @@ void loop() {
   }
 
   if (state == STATE_RUNNING) {
-    if (digitalRead(PHOTODIODE) == LOW) {
+    if (analogRead(PHOTODIODE) < 100) {
       stopTime = millis();
       runTime = (stopTime - startTime) / 1000.0;
       digitalWrite(LED_RED, LOW);

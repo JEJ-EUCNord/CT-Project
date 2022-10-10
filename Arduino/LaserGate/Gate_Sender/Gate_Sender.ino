@@ -49,7 +49,7 @@ void beep() {
 }
 
 void loop() {
-  if (digitalRead(PHOTODIODE) == LOW) {
+  if (analogRead(PHOTODIODE) < 100) {
     radio.write(&sender, sizeof(sender));
     digitalWrite(LED_RED, HIGH);
     digitalWrite(LED_GREEN, LOW);
